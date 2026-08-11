@@ -43,6 +43,14 @@
             letter-spacing: 2px; text-align: center;
         }
 
+        /* --- DYNAMIC WATERMARK LAYER --- */
+        #watermark-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9998; opacity: 0.04;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: #00e5ff;
+            display: flex; flex-wrap: wrap; overflow: hidden; justify-content: space-around; align-content: space-around;
+        }
+
         /* --- LAUNCH SCREEN (Rocket Intro) --- */
         #launch-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -328,8 +336,18 @@
 </head>
 <body oncopy="return false" oncut="return false" onpaste="return false">
 
-    <!-- Privacy Shielding Overlay for Screenshot Protection -->
+    <!-- Privacy Shielding Overlay for Screenshot Prevention -->
     <div id="privacy-shield">⚠️ SECURITY PROTOCOL ACTIVE: SCREEN CAPTURE BLOCKED</div>
+
+    <!-- Dynamic Watermark Layer -->
+    <div id="watermark-layer">
+        <span>KAZIM NAHIAN - SECURED NODE</span>
+        <span>AIR-GAPPED PROTOCOL ACTIVE</span>
+        <span>UNAUTHORIZED LOGGED</span>
+        <span>KAZIM NAHIAN - SECURED NODE</span>
+        <span>AIR-GAPPED PROTOCOL ACTIVE</span>
+        <span>UNAUTHORIZED LOGGED</span>
+    </div>
 
     <!-- Launch Screen Intro (Rocket Animation) -->
     <div id="launch-screen">
@@ -549,7 +567,7 @@
 
     <div id="copy-toast">DATA COPIED</div>
 
-    <!-- --- ADVANCED SECURITY & DYNAMIC LIVE SCRIPTS --- -->
+    <!-- --- ADVANCED SECURITY, WATERMARK & SCRAPER TRAPS --- -->
     <script>
         // 1. Disable Right-Click Context Menu
         document.addEventListener('contextmenu', e => {
@@ -571,7 +589,17 @@
             }
         });
 
-        // 3. Blur screen automatically if user switches tab or tries to screenshot via window focus loss / Snipping tools
+        // 3. DevTools / Debugger Trap (Freezes page if inspect element opens)
+        setInterval(() => {
+            const before = performance.now();
+            debugger;
+            const after = performance.now();
+            if (after - before > 100) {
+                document.body.innerHTML = "<h1 style='color:#ff3366; text-align:center; margin-top:35vh; font-family:JetBrains Mono;'>ACCESS TERMINATED: DEVELOPER INSPECTION BLOCKED.</h1>";
+            }
+        }, 1000);
+
+        // 4. Blur screen automatically if user switches tab or tries to screenshot via window focus loss
         window.addEventListener('blur', () => {
             document.getElementById('privacy-shield').style.display = 'flex';
             document.body.style.filter = 'blur(20px)';
@@ -622,7 +650,6 @@
             let secs = String(uptimeSecs % 60).padStart(2, '0');
             document.getElementById('live-uptime').innerText = `${hrs}:${mins}:${secs}`;
 
-            // Random fluctuations for elite terminal look
             let randomPing = Math.floor(Math.random() * (29 - 21 + 1)) + 21;
             document.getElementById('live-latency').innerText = randomPing + "ms";
 
