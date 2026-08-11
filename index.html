@@ -34,6 +34,15 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
 
+        /* --- PRIVACY SHIELD OVERLAY FOR SCREENSHOT PREVENTION --- */
+        #privacy-shield {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #030712; z-index: 99999; display: none;
+            justify-content: center; align-items: center;
+            font-family: 'JetBrains Mono', monospace; color: #ff3366; font-size: 1.2rem;
+            letter-spacing: 2px; text-align: center;
+        }
+
         /* --- LAUNCH SCREEN (Rocket Intro) --- */
         #launch-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -319,6 +328,9 @@
 </head>
 <body oncopy="return false" oncut="return false" onpaste="return false">
 
+    <!-- Privacy Shielding Overlay for Screenshot Protection -->
+    <div id="privacy-shield">⚠️ SECURITY PROTOCOL ACTIVE: SCREEN CAPTURE BLOCKED</div>
+
     <!-- Launch Screen Intro (Rocket Animation) -->
     <div id="launch-screen">
         <div class="rocket">
@@ -550,23 +562,35 @@
             if (
                 e.key === 'PrintScreen' || 
                 e.keyCode === 44 ||
-                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'p')) ||
+                (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'p' || e.key === 'i' || e.shiftKey && e.key === 'I')) ||
                 e.keyCode === 123 // F12 Developer Tools
             ) {
                 e.preventDefault();
-                alert("ACCESS DENIED: Extraction & Screen Capture Blocked.");
+                triggerShield();
                 return false;
             }
         });
 
-        // 3. Blur screen automatically if user switches tab or tries to screenshot via window focus loss
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                document.body.style.filter = "blur(18px)";
-            } else {
-                document.body.style.filter = "blur(0px)";
-            }
+        // 3. Blur screen automatically if user switches tab or tries to screenshot via window focus loss / Snipping tools
+        window.addEventListener('blur', () => {
+            document.getElementById('privacy-shield').style.display = 'flex';
+            document.body.style.filter = 'blur(20px)';
         });
+
+        window.addEventListener('focus', () => {
+            document.getElementById('privacy-shield').style.display = 'none';
+            document.body.style.filter = 'blur(0px)';
+        });
+
+        function triggerShield() {
+            const shield = document.getElementById('privacy-shield');
+            shield.style.display = 'flex';
+            document.body.style.filter = 'blur(20px)';
+            setTimeout(() => {
+                shield.style.display = 'none';
+                document.body.style.filter = 'blur(0px)';
+            }, 2500);
+        }
 
         // Rocket Launch Intro
         window.addEventListener('load', () => {
